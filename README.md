@@ -8,5 +8,8 @@ C++ Fast, Static and Generic Object Pool library with smart pointer
 #include "pool.hpp"
 Pool<int, 6> pool;
 auto obj1 = pool.acquire();
-dosomething(*obj);
+if (nullptr != obj.get())
+    dosomething(*obj);
+else
+    throw("no object in pool available");
 ```

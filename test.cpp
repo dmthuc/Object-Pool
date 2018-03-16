@@ -19,6 +19,9 @@ int main()
     }
     
     assert(pool.status_[1] == Is_available::yes);
-    cout<<*obj1<<'\n';
+    if (nullptr != obj1.get())
+        cout<<*obj1<<'\n';
+    else
+        cout<<"no obj available\n";
 }
 
