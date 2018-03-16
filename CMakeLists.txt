@@ -1,0 +1,2 @@
+set (CMAKE_CXX_STANDARD 14)
+ADD_EXECUTABLE(test test.cpp)
