@@ -23,13 +23,21 @@ enum class Is_available: bool {yes, no};
 template <class T, size_t N> 
 class Pool {
 public:
-    Pool() noexcept;
-    Pool(const Pool& other) = delete; 
+    template<class ...Types>
+    Pool(Types ...args) noexcept
+        :storage_{}, num_of_avail_(N), status_{}
+    {
+        storage_.fill(T{args...});
+        status_.fill(Is_available::yes);
+    }
+
+    Pool(const Pool& other) = delete;
     Pool(Pool&& other) = delete; 
     Pool& operator = (const Pool& other) = delete; 
     Pool& operator = (Pool&& other) = delete; 
 
-    auto acquire() noexcept {
+    auto acquire() noexcept
+    {
         auto deleter = [this] (const T* obj) {
             if (nullptr == obj)
                 return;
@@ -53,13 +61,6 @@ private:
     std::array<T,N> storage_; 
     std::array<Is_available, N> status_;
 };
-
-template<class T, size_t N>
-Pool<T, N>::Pool() noexcept
-    :storage_{}, num_of_avail_(N), status_{}
-{
-    status_.fill(Is_available::yes);
-}
 
 #endif
 
