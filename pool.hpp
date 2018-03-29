@@ -23,11 +23,11 @@ enum class Is_available: bool {yes, no};
 template <class T, size_t N> 
 class Pool {
 public:
-    template<class ...Types>
-    Pool(Types ...args) noexcept
+    template<class ...Args>
+    Pool(Args&& ...args) noexcept
         :storage_{}, num_of_avail_(N), status_{}
     {
-        storage_.fill(T{args...});
+        storage_.fill(T{std::forward<Args>(args)...});
         status_.fill(Is_available::yes);
     }
 
