@@ -17,15 +17,13 @@
 #define __POOL_HPP
 #include <array>
 #include <memory>
-using namespace std;
 
-enum class Is_available: bool {yes, no};
 template <class T, size_t N> 
 class Pool {
 public:
     template<class ...Args>
     Pool(Args&& ...args) noexcept
-        :storage_{}, num_of_avail_(N), status_{}
+        :num_of_avail_(N), storage_{}, status_{}
     {
         storage_.fill(T{std::forward<Args>(args)...});
         status_.fill(Is_available::yes);
@@ -45,18 +43,21 @@ public:
         };
 
         if (0 == num_of_avail_)
-            return unique_ptr<T, decltype(deleter)>(nullptr,deleter); 
+            return std::unique_ptr<T, decltype(deleter)>(nullptr,deleter); 
         for (size_t i = 0; i < status_.size(); ++i) {
             if (Is_available::yes == status_[i]) {
                 status_[i] = Is_available::no;
                 --num_of_avail_;
-                return unique_ptr<T, decltype(deleter)>(&storage_[i],deleter); 
+                return std::unique_ptr<T, decltype(deleter)>(&storage_[i],deleter); 
             }
         }
+
+        return std::unique_ptr<T, decltype(deleter)>(nullptr,deleter); 
     }
 
     size_t num_of_avail() const noexcept {return num_of_avail_;};
 private:
+    enum class Is_available: bool {yes, no};
     size_t num_of_avail_;
     std::array<T,N> storage_; 
     std::array<Is_available, N> status_;

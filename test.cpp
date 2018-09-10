@@ -55,5 +55,6 @@ int main()
 {
     test_with_integral_type();
     test_with_compound_type();
+    cout<<"All test passed"<<endl;
 }
 
