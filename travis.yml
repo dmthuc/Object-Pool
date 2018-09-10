@@ -1,0 +1,7 @@
+language: cpp
+compiler: gcc
+
+script:
+    - cmake
+    - make
+    - ./travis_qmake_gcc_cpp14
