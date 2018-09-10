@@ -2,6 +2,8 @@ language: cpp
 compiler: gcc
 
 script:
-    - cmake
+    - mkdir build
+    - cd ./build
+    - cmake ..
     - make
     - ./travis_qmake_gcc_cpp14
