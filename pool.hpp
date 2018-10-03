@@ -22,7 +22,7 @@ template <class T, size_t N>
 class Pool {
 public:
     template<class ...Args>
-    Pool(Args&& ...args) noexcept
+    Pool(Args&& ...args)
         :num_of_avail_(N), storage_{}, status_{}
     {
         storage_.fill(T{std::forward<Args>(args)...});
