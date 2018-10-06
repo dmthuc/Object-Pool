@@ -8,6 +8,12 @@
 
 using namespace std;
 struct Foo {
+    Foo(int _a, string _b)
+        :a(_a), b(std::move(_b))
+    {}
+    Foo()
+        :a{},b{}
+    {}
     int a;
     string b;
 };
@@ -16,9 +22,17 @@ void test_with_compound_type()
 {
     Pool<Foo, 6> pool{1, string{"some string"}};
     auto obj1 = pool.acquire();
-    assert(pool.status_[0] == Is_available::no);
+    assert(!pool.status_[0]);
     if (nullptr != obj1.get())
         cout<<obj1->b<<'\t'<<obj1->a<<'\n';
+    else
+        cout<<"no obj available\n";
+
+    auto obj2 = pool.acquire();
+
+    assert(!pool.status_[1]);
+    if (nullptr != obj2.get())
+        cout<<obj2->b<<'\t'<<obj2->a<<'\n';
     else
         cout<<"no obj available\n";
 }
@@ -27,14 +41,14 @@ void test_with_integral_type()
 {
     Pool<int, 6> pool;
     auto obj1 = pool.acquire();
-    assert(pool.status_[0] == Is_available::no);
+    assert(!pool.status_[0]);
 
     {
         auto obj2 = pool.acquire();
-        assert(pool.status_[1] == Is_available::no);
+        assert(!pool.status_[1]);
     }
     
-    assert(pool.status_[1] == Is_available::yes);
+    assert(pool.status_[1]);
     if (nullptr != obj1.get())
         cout<<*obj1<<'\n';
     else

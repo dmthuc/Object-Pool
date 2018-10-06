@@ -17,6 +17,7 @@
 #define __POOL_HPP
 #include <array>
 #include <memory>
+#include <bitset>
 
 template <class T, size_t N> 
 class Pool {
@@ -26,7 +27,7 @@ public:
         :num_of_avail_(N), storage_{}, status_{}
     {
         storage_.fill(T{std::forward<Args>(args)...});
-        status_.fill(Is_available::yes);
+        status_.set();
     }
 
     Pool(const Pool& other) = delete;
@@ -37,16 +38,15 @@ public:
     auto acquire() noexcept
     {
         auto deleter = [this] (const T* obj) {
-            if (nullptr == obj)
-                return;
-            status_[obj-&storage_[0]] = Is_available::yes;
+            if (nullptr != obj)
+                status_.set(obj-&storage_[0]);
         };
 
         if (0 == num_of_avail_)
             return std::unique_ptr<T, decltype(deleter)>(nullptr,deleter); 
         for (size_t i = 0; i < status_.size(); ++i) {
-            if (Is_available::yes == status_[i]) {
-                status_[i] = Is_available::no;
+            if (status_[i]) {
+                status_.reset(i);
                 --num_of_avail_;
                 return std::unique_ptr<T, decltype(deleter)>(&storage_[i],deleter); 
             }
@@ -57,10 +57,9 @@ public:
 
     size_t num_of_avail() const noexcept {return num_of_avail_;};
 private:
-    enum class Is_available: bool {yes, no};
     size_t num_of_avail_;
     std::array<T,N> storage_; 
-    std::array<Is_available, N> status_;
+    std::bitset<N> status_;
 };
 
 #endif

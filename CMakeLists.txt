@@ -19,7 +19,7 @@ ELSE()
     MESSAGE(STATUS "===> Address sanitizer: OFF.")
 ENDIF()
 
-SET(CMAKE_CXX_FLAGS "-g -Wall -Wnon-virtual-dtor -Werror -O3 -DNDEBUG -Wno-unused-function -pedantic -march=native")
+#SET(CMAKE_CXX_FLAGS "-g -Wall -Wnon-virtual-dtor -Werror -O3 -DNDEBUG -Wno-unused-function -pedantic -march=native")
 
 ADD_EXECUTABLE(test_lib test.cpp)
 
