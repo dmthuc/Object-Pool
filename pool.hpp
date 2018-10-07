@@ -18,15 +18,38 @@
 #include <array>
 #include <memory>
 #include <bitset>
+#include <stdexcept>
 
 template <class T, size_t N> 
 class Pool {
 public:
+    using const_iterator = typename std::array<T,N>::const_iterator;
+
     template<class ...Args>
     Pool(Args&& ...args)
         :num_of_avail_(N), storage_{}, status_{}
     {
         storage_.fill(T{std::forward<Args>(args)...});
+        status_.set();
+    }
+
+    template<class Iterator>
+    Pool(Iterator begin, Iterator end)
+        :num_of_avail_(N), storage_{}, status_{}
+    {
+        if (N != std::distance(begin, end))
+            throw std::runtime_error("distance between begin and end isn't:" + std::to_string(N));
+        
+        std::move(begin, end, storage_.begin()); 
+        status_.set();
+    }
+
+    Pool(std::initializer_list<T> init)
+        :num_of_avail_{N}, storage_{}, status_{}
+    {
+        if (init.size() != N)
+            throw std::runtime_error("mismatch size of initializer_list and pool"); 
+        std::copy(init.begin(), init.end(), storage_.begin()); 
         status_.set();
     }
 
@@ -56,6 +79,16 @@ public:
     }
 
     size_t num_of_avail() const noexcept {return num_of_avail_;};
+    const_iterator begin() const
+    {
+        return storage_.cbegin();
+    }
+
+    
+    const_iterator end() const
+    {
+        return storage_.cend();
+    }
 private:
     size_t num_of_avail_;
     std::array<T,N> storage_; 
