@@ -15,5 +15,17 @@ else
     throw("no object in pool available");
 //with compound type, client can pass parameters for the constructor of containing object
 Pool<Foo, 6> pool{ args1, args2}
+
+//can also construct it with a range, this is the most useful case.
+vector<Foo> vec{Foo{1}, Foo{2});
+//each element of the range will be moved to pool, client have to keep track of number himself
+Pool<Foo, 2> pool(vec.begin(), vec.end());
+
+//also can construct with initializer list, which will be copied from.
+Pool<Foo, 2> pool{Foo{1}, Foo{2}};
+
+//iterate to const element
+for(const auto& e: pool)
+    cout<<e;
 ```
 

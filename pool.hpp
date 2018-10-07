@@ -78,17 +78,11 @@ public:
         return std::unique_ptr<T, decltype(deleter)>(nullptr,deleter); 
     }
 
-    size_t num_of_avail() const noexcept {return num_of_avail_;};
-    const_iterator begin() const
-    {
-        return storage_.cbegin();
-    }
+    size_t num_of_avail() const noexcept {return num_of_avail_;}
 
+    const_iterator begin() const noexcept {return storage_.cbegin();}
     
-    const_iterator end() const
-    {
-        return storage_.cend();
-    }
+    const_iterator end() const noexcept {return storage_.cend();}
 private:
     size_t num_of_avail_;
     std::array<T,N> storage_; 
