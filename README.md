@@ -1,4 +1,7 @@
-# Object-Pool
+Object-Pool with smart-pointer [![Build Status](https://travis-ci.org/dmthuc/Object-Pool.svg?branch=master)](https://travis-ci.org/dmthuc/Object-Pool)
+=====
+
+
 C++ Fast, Static and Generic Object Pool library with smart pointer  
 This is static object pool library. It mean that object pool have fix number of object it manages. Client can't add more object after initialization.  
 Because it is static so there's no malloc and all operator is noexcept and fast.
