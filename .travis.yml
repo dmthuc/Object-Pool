@@ -1,6 +1,11 @@
 # Enable C++ support
 language: cpp
 
+
+addons: 
+  apt: 
+    packages: libboost-all-dev
+
 matrix:
   include:
     - os: linux

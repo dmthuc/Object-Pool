@@ -61,12 +61,15 @@ public:
     auto acquire() noexcept
     {
         auto deleter = [this] (const T* obj) {
-            if (nullptr != obj)
+            if (nullptr != obj) {
                 status_.set(obj-&storage_[0]);
+                ++num_of_avail_;
+            }
         };
 
         if (0 == num_of_avail_)
             return std::unique_ptr<T, decltype(deleter)>(nullptr,deleter); 
+
         for (size_t i = 0; i < status_.size(); ++i) {
             if (status_[i]) {
                 status_.reset(i);

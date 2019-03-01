@@ -20,21 +20,34 @@ ELSE()
 ENDIF()
 
 #SET(CMAKE_CXX_FLAGS "-g -Wall -Wnon-virtual-dtor -Werror -O3 -DNDEBUG -Wno-unused-function -pedantic -march=native")
+FIND_PACKAGE(Boost REQUIRED
+    COMPONENTS
+        unit_test_framework 
+)
+MESSAGE(STATUS "Boost headers found at: ${Boost_INCLUDE_DIRS}")
+MESSAGE(STATUS "Boost libs found at: ${Boost_LIBRARY_DIRS}")
 
-ADD_EXECUTABLE(test_lib test.cpp)
 
-SET_TARGET_PROPERTIES(test_lib PROPERTIES
+ADD_EXECUTABLE(test_pool test/test.cpp)
+
+TARGET_INCLUDE_DIRECTORIES(test_pool PRIVATE ./)
+
+SET_TARGET_PROPERTIES(test_pool PROPERTIES
     COMPILE_FLAGS "${COMPILATION_FLAGS} ${SANITIZER_CFLAGS} -fPIE"
     LINK_FLAGS "${LINK_FLAGS} ${SANITIZER_LFLAGS} -pie"
 )
 
 IF(${THREAD_SANITIZER} STREQUAL "ON")
-    TARGET_LINK_LIBRARIES(test_lib
+    TARGET_LINK_LIBRARIES(test_pool
                           tsan)
 ELSEIF(${ADDRESS_SANITIZER} STREQUAL "ON")
-    TARGET_LINK_LIBRARIES(test_lib
+    TARGET_LINK_LIBRARIES(test_pool
                           asan)
 ENDIF()
 
-ADD_CUSTOM_COMMAND(TARGET test_lib POST_BUILD COMMAND ./test_lib --build_info --show_progress)
+TARGET_LINK_LIBRARIES(test_pool
+    ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+)
+
+ADD_CUSTOM_COMMAND(TARGET test_pool POST_BUILD COMMAND ./test_pool --build_info --show_progress)
 
